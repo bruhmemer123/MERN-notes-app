@@ -1,5 +1,5 @@
 import axios from "axios"
 const api=axios.create({
-    baseURL: "https://mern-notes-app-iq0h.onrender.com/api"
+    baseURL: "api"
 })
 export default api
