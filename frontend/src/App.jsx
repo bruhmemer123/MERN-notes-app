@@ -4,7 +4,7 @@ import CreatePage from './pages/CreatePage'
 import EditPage from './pages/EditPage'
 const App = () => {
   return (
-    <div data-theme='night' className='min-h-screen'>
+    <div className='min-h-screen'>
     <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/create' element={<CreatePage />} />

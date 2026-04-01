@@ -14,6 +14,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18 <23"
+  },
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/bruhmemer123/MERN-notes-app/issues"
