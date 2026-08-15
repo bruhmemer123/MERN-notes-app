@@ -1,17 +1,14 @@
 import { Link } from "react-router"
 import { Moon, PlusIcon, Sun } from "lucide-react"
-import { useState } from "react"
+import { useState,useEffect } from "react"
 const Navbar = () => {
-    const [theme, setTheme] = useState('night')
+    const [theme, setTheme] = useState(localStorage.getItem('theme') ||'night')
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme)
+        localStorage.setItem('theme', theme)
+    }, [theme])
     const handleTheme=()=>{
-        if(theme === 'night'){
-            setTheme('corporate')
-            document.documentElement.setAttribute('data-theme', 'corporate')
-        }
-        else{
-            setTheme('night')
-            document.documentElement.setAttribute('data-theme', 'night')
-        }
+        setTheme(theme === 'night' ? 'corporate' : 'night')
     }
     return (
     <header className="bg-base-300 border-b border-base/100">
