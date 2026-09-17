@@ -8,18 +8,12 @@ export const useAuthStore = create((set) => ({
     isLoggingIn: false,
     isSigningUp: false,
     checkAuth: async () => {
-        const token = localStorage.getItem("token")
-        if (!token) {
-            set({ user: null, isCheckingAuth: false })
-            return;
-        }
         try {
             const res = await api.get("/auth/me");
             set({ user: res.data.user });
         }
         catch (error) {
             console.error("Auth check failed:", error);
-            localStorage.removeItem("token");
             set({ user: null });
         }
         finally {
@@ -30,7 +24,6 @@ export const useAuthStore = create((set) => ({
         set({ isSigningUp: true });
         try {
             const res = await api.post("/auth/register", data);
-            localStorage.setItem("token", res.data.token);
             set({ user: res.data.user });
             toast.success("Account created successfully");
             return true;
@@ -46,7 +39,6 @@ export const useAuthStore = create((set) => ({
         set({ isLoggingIn: true });
         try {
             const res = await api.post("/auth/login", data);
-            localStorage.setItem("token", res.data.token);
             set({ user: res.data.user });
             toast.success("Logged in successfully");
             return true;
@@ -59,8 +51,13 @@ export const useAuthStore = create((set) => ({
         }
     },
     logout: async () => {
-        localStorage.removeItem("token");
-        set({ user: null });
-        toast.success("Logged out successfully");
+        try {
+            await api.post("/auth/logout")
+            set({ user: null });
+            toast.success("Logged out successfully");
+        }
+        catch (error) {
+            toast.error(error.response?.data?.message || "Logout failed");
+        }
     }
 }))

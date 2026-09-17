@@ -29,8 +29,16 @@ export async function registerUser(req, res) {
 
         const token = generateToken(newUser._id);
 
+        res.cookie("jwt", token, {
+            httpOnly: true, // Prevents client-side JS from reading the cookie (XSS protection)
+            secure: process.env.NODE_ENV === "production", // Sent only over HTTPS in production
+            sameSite: "strict", // Prevents CSRF attacks
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        }
+        )
+
         res.status(201).json({
-            token,
             user: {
                 id: newUser._id,
                 _id: newUser._id,
@@ -64,8 +72,16 @@ export async function loginUser(req, res) {
 
         const token = generateToken(user._id);
 
+        res.cookie("jwt", token, {
+            httpOnly: true, // Prevents client-side JS from reading the cookie (XSS protection)
+            secure: process.env.NODE_ENV === "production", // Sent only over HTTPS in production
+            sameSite: "strict", // Prevents CSRF attacks
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        }
+        )
+
         res.status(200).json({
-            token,
             user: {
                 id: user._id,
                 _id: user._id,
@@ -92,6 +108,20 @@ export async function currentUser(req, res) {
         });
     } catch (error) {
         console.error("Error in currentUser:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+export async function logoutUser(req, res) {
+    try {
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "strict",
+        });
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
         res.status(500).json({ message: "Server error" });
     }
 }
